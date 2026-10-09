@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+.venv/
+venv/
+ENV/
+env/
+
+# Project/editor
+.kilo/
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment files
+.env
+.env.*
+
+# Logs
+*.log
+
+# Build artifacts
+build/
+dist/
+*.egg-info/

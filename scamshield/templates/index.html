@@ -1,0 +1,34 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ScamShield AI</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#0f172a;color:#e2e8f0;margin:0;padding:24px;display:flex;justify-content:center}
+.box{max-width:720px;width:100%}h1{margin:0 0 4px}p.s{color:#94a3b8;margin-top:0}
+textarea{width:100%;height:130px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#fff;padding:12px;font-size:15px;box-sizing:border-box}
+button{background:#14b8a6;border:0;color:#04201d;font-weight:700;padding:12px 22px;border-radius:10px;cursor:pointer;margin:10px 8px 10px 0}
+button.g{background:#334155;color:#e2e8f0;font-weight:500;padding:8px 12px;font-size:13px}
+.card{background:#1e293b;border-radius:12px;padding:16px;margin-top:14px}
+.bar{height:14px;background:#334155;border-radius:7px;overflow:hidden}.fill{height:100%}
+.sig{border-left:4px solid #f59e0b;padding:6px 10px;margin:8px 0;background:#0f172a;border-radius:4px}
+</style></head><body><div class="box">
+<h1>🛡️ ScamShield AI</h1><p class="s">Explainable scam detector for SMS / WhatsApp / UPI messages — English, Tamil, Hindi &amp; Tanglish</p>
+<textarea id="t" placeholder="Paste a suspicious message..."></textarea><br>
+<button onclick="go()">Check message</button>
+<button class="g" onclick="ex(0)">Try: KYC scam</button>
+<button class="g" onclick="ex(1)">Try: Tanglish scam</button>
+<button class="g" onclick="ex(2)">Try: genuine bank SMS</button>
+<div id="out"></div></div>
+<script>
+const E=["Dear customer your SBI account will be blocked today. Update KYC now http://sbi-kyc-update.xyz and share OTP",
+"Unga parcel hold la irukku. Udane Rs 49 pay pannunga http://post-india.top illana return aagum",
+"Rs 500 debited from A/c XX1234 at Zomato. Avl bal Rs 9000. Do not share OTP with anyone. - HDFC Bank"];
+function ex(i){t.value=E[i];go()}
+async function go(){
+ const r=await (await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:t.value})})).json();
+ if(r.error){out.innerHTML='<div class=card>'+r.error+'</div>';return}
+ const c={HIGH:'#ef4444',MEDIUM:'#f59e0b',LOW:'#22c55e'}[r.level];
+ out.innerHTML=`<div class=card><h2 style="color:${c};margin:0">${r.level} RISK — ${r.score}/100</h2>
+ <div class=bar><div class=fill style="width:${r.score}%;background:${c}"></div></div>
+ <small>ML score ${r.ml_score} · Rule score ${r.rule_score}</small>
+ <h3>Why?</h3>${r.signals.length?r.signals.map(s=>`<div class=sig><b>${s.signal}</b><br>${s.why}</div>`).join(''):'No red flags found.'}
+ <h3>What to do</h3><p>${r.advice}</p></div>`}
+</script></body></html>
